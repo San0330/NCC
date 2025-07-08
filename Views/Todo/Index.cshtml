@@ -1,7 +1,9 @@
+@model MyTodoApp.Models.Item;
 @{
     ViewData["Title"] = "Todo Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to Todo Page</h1>    
+    <h1 class="display-4">Welcome to Todo Page</h1>  
+    <h2>Todo: @Model.Text</h2>  
 </div>
