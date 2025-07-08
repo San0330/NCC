@@ -1,0 +1,81 @@
+## Build results
+bin/
+obj/
+out/
+[Bb]uild/
+[Ll]og/
+*.log
+
+## Rider / VSCode / JetBrains IDEs
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## OS-generated files
+.DS_Store
+*.swp
+*~
+
+## ASP.NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## User secrets (if using)
+secrets.json
+
+## ASP.NET publish output
+wwwroot/
+dist/
+node_modules/
+bundle/
+*.db
+
+## NuGet
+*.nupkg
+packages/
+*.snupkg
+*.nuspec
+
+## Environment files
+.env
+.env.*
+
+## SQLite database files (optional)
+*.db
+*.sqlite
+*.sqlite3
+
+## dotnet CLI
+*.db-shm
+*.db-wal
+*.pidb
+
+## Others
+*.log
+*.tgz
+*.tar.gz
+*.zip
+
+## Coverage reports
+coverage/
+*.lcov
+
+## Logs
+*.log
+logs/
+
+## Crash logs
+crash.log
+
+## Temp files
+tmp/
+temp/
+
+## Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
