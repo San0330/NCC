@@ -8,7 +8,7 @@ public class TodoController : Controller
 {
     public IActionResult Index()
     {
-        var item = new Item() { Id = 1, Text = "Clean room.", IsCompleted = false };
-        return View(item);
+        var todo = new Todo() { Id = 1, Task = "Clean room.", IsCompleted = false };
+        return View(todo);
     }
 }
