@@ -1,9 +1,43 @@
-@model MyTodoApp.Models.Todo;
+@model List<MyTodoApp.Models.Todo>
 @{
     ViewData["Title"] = "Todo Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Todo Page</h1>  
-    <h2>Todo: @Model.Task</h2>  
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Todo List</h1>
+
+    <a asp-controller="Todo" asp-action="Create"
+        class="mb-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Add Task
+    </a>
+
+    <table class="w-full border rounded shadow mt-4">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="text-left px-4 py-2">Task</th>
+                <th class="text-left px-4 py-2">Status</th>
+                <th class="text-left px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todo in Model)
+            {
+            <tr class="border-t hover:bg-gray-50">
+                <td class="px-4 py-2">@todo.Task</td>
+                <td class="px-4 py-2">
+                    @Html.Raw(todo.IsCompleted
+                                        ? "<span class='text-green-600 font-semibold'>Done</span>"
+                                        : "<span class='text-red-600'>Not Done</span>")
+                </td>
+                <td class="px-4 py-2 space-x-2">
+                    <a asp-controller="Todo" asp-action="Edit" asp-route-id="@todo.Id"
+                        class="text-blue-600 hover:underline">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@todo.Id" method="post" class="inline">
+                        <button class="text-red-600 hover:underline" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+                        }
+        </tbody>
+    </table>
 </div>
