@@ -1,0 +1,17 @@
+@model MyTodoApp.Models.Todo
+@{
+    ViewData["Title"] = "Create Todo";
+}
+
+<div class="container mx-auto p-6 max-w-lg">
+    <h2 class="text-2xl font-bold mb-4">Create New Task</h2>
+
+    <form asp-action="Create" method="post" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">Task</label>
+            <input asp-for="Task" class="w-full border border-gray-300 p-2 rounded" placeholder="Enter your task..." />           
+        </div>
+
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create</button>
+    </form>
+</div>

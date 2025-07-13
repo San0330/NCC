@@ -26,4 +26,20 @@ public class TodoController : Controller
     {
         return View(_todos);
     }
+
+    // Show create form
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    // Create
+    [HttpPost]
+    public IActionResult Create(Todo todo)
+    {
+        todo.Id = _todos.Count + 1; // Simple ID generation
+        todo.IsCompleted = false; // Default to not completed
+        _todos.Add(todo);
+        return RedirectToAction("Index");
+    }
 }
