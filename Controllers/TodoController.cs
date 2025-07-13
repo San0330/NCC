@@ -37,6 +37,10 @@ public class TodoController : Controller
     [HttpPost]
     public IActionResult Create(Todo todo)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(todo); // Return with validation errors
+        }
         todo.Id = _todos.Count + 1; // Simple ID generation
         todo.IsCompleted = false; // Default to not completed
         _todos.Add(todo);
