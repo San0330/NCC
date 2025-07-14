@@ -1,0 +1,31 @@
+@model MyTodoApp.Models.Todo
+@{
+    ViewData["Title"] = "Edit Todo";
+}
+
+<div class="container mx-auto p-6 max-w-lg">
+    <h2 class="text-2xl font-bold mb-4">Edit Task</h2>
+
+    <form asp-action="Edit" method="post" class="space-y-4">
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label class="block text-sm font-medium">Task</label>
+            <input asp-for="Task" class="w-full border border-gray-300 p-2 rounded" />
+            <span asp-validation-for="Task" class="text-red-600 text-sm"></span>
+        </div>
+
+        <div>
+            <label class="inline-flex items-center">
+                <input type="checkbox" asp-for="IsCompleted" class="mr-2" />
+                <span>Completed</span>
+            </label>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

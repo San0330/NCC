@@ -46,4 +46,32 @@ public class TodoController : Controller
         _todos.Add(todo);
         return RedirectToAction("Index");
     }
+
+    // Show edit form
+    public IActionResult Edit(int id)
+    {
+        var todo = _todos.FirstOrDefault(t => t.Id == id);
+        if (todo == null)
+            return NotFound();
+
+        return View(todo);
+    }
+
+    // Update
+    [HttpPost]
+    public IActionResult Edit(Todo updatedTodo)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(updatedTodo); // Return with validation errors
+        }
+
+        var todo = _todos.FirstOrDefault(t => t.Id == updatedTodo.Id);
+        if (todo == null)
+            return NotFound();
+
+        todo.Task = updatedTodo.Task;
+        todo.IsCompleted = updatedTodo.IsCompleted;
+        return RedirectToAction("Index");
+    }
 }
