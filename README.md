@@ -19,7 +19,7 @@ Tasks are stored in memory using a static list and reset each time the applicati
 
 ## 🖼️ Screenshot
 
-![Todo UI Screenshot](./wwwroot/screenshots/todo-index-page.png)
+![Todo UI Screenshot](./screenshots/todo-index-page.png)
 
 ---
 
