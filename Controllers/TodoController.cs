@@ -22,6 +22,8 @@ public class TodoController : Controller
         },
     };
 
+    private static int _nextId = _todos.Count + 1;
+
     public IActionResult Index()
     {
         return View(_todos);
@@ -41,7 +43,7 @@ public class TodoController : Controller
         {
             return View(todo); // Return with validation errors
         }
-        todo.Id = _todos.Count + 1; // Simple ID generation
+        todo.Id = _nextId++; // Simple ID generation
         todo.IsCompleted = false; // Default to not completed
         _todos.Add(todo);
         return RedirectToAction("Index");
@@ -72,6 +74,14 @@ public class TodoController : Controller
 
         todo.Task = updatedTodo.Task;
         todo.IsCompleted = updatedTodo.IsCompleted;
+        return RedirectToAction("Index");
+    }
+
+    // Delete
+    [HttpPost]
+    public IActionResult Delete(int id)
+    {
+        _todos.RemoveAll(t => t.Id == id);
         return RedirectToAction("Index");
     }
 }
