@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MyTodoApp.Models;
+using MyTodoApp.Services;
 
 namespace MyTodoApp.Controllers;
 
@@ -24,8 +25,16 @@ public class TodoController : Controller
 
     private static int _nextId = _todos.Count + 1;
 
+    private readonly ILog _logger;
+
+    public TodoController(ILog logger)
+    {
+        _logger = logger;
+    }
+
     public IActionResult Index()
     {
+        _logger.Info("Accessed Todo Index");
         return View(_todos);
     }
 

@@ -1,7 +1,12 @@
+using MyTodoApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ILog, MyConsoleLogger>();
+// builder.Services.AddTransient<ILog, MyConsoleLogger>();
+// builder.Services.AddSingleton<ILog, MyConsoleLogger>();
 
 var app = builder.Build();
 
