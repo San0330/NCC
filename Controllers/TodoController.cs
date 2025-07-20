@@ -35,6 +35,10 @@ public class TodoController : Controller
     public IActionResult Index()
     {
         _logger.Info("Accessed Todo Index");
+
+        // Resolve the ILog implementation manually
+        // var logger = HttpContext.RequestServices.GetRequiredService<ILog>();
+        // logger.Info("Visited Index page using HttpContext.RequestServices");
         return View(_todos);
     }
 
