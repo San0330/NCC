@@ -90,6 +90,21 @@ public class TodoController : Controller
         return RedirectToAction("Index");
     }
 
+    // Without model binding
+    // Alternatively we can use FormCollection to handle form data
+    [HttpPost]
+    public IActionResult Edit2(IFormCollection form)
+    {
+        // no validation here, just for demonstration
+        var todo = _todos.FirstOrDefault(t => t.Id == int.Parse(form["Id"]));
+        if (todo == null)
+            return NotFound();
+
+        todo.Task = form["Task"];
+        todo.IsCompleted = bool.Parse(form["IsCompleted"]);
+        return RedirectToAction("Index");
+    }
+
     // Delete
     [HttpPost]
     public IActionResult Delete(int id)
