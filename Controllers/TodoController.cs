@@ -1,45 +1,36 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using MySql.Data.MySqlClient;
 using MyTodoApp.Models;
-using MyTodoApp.Services;
 
 namespace MyTodoApp.Controllers;
 
 public class TodoController : Controller
 {
-    private static List<Todo> _todos = new List<Todo>
-    {
-        new Todo
-        {
-            Id = 1,
-            Task = "Learn ASP.NET MVC",
-            IsCompleted = false,
-        },
-        new Todo
-        {
-            Id = 2,
-            Task = "Build a Todo App",
-            IsCompleted = true,
-        },
-    };
-
-    private static int _nextId = _todos.Count + 1;
-
-    private readonly ILog _logger;
-
-    public TodoController(ILog logger)
-    {
-        _logger = logger;
-    }
+    private readonly string _connectionString =
+        "Server=localhost;Database=mytodoapp;User ID=santosh;Password=password;";
 
     public IActionResult Index()
     {
-        _logger.Info("Accessed Todo Index");
+        List<Todo> todos = new List<Todo>();
 
-        // Resolve the ILog implementation manually
-        // var logger = HttpContext.RequestServices.GetRequiredService<ILog>();
-        // logger.Info("Visited Index page using HttpContext.RequestServices");
-        return View(_todos);
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        string query = "SELECT * FROM Todos";
+        using var cmd = new MySqlCommand(query, conn);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            todos.Add(
+                new Todo
+                {
+                    Id = reader.GetInt32("Id"),
+                    Task = reader.GetString("Task"),
+                    IsCompleted = reader.GetBoolean("IsCompleted"),
+                }
+            );
+        }
+        return View(todos);
     }
 
     // Show create form
@@ -56,20 +47,42 @@ public class TodoController : Controller
         {
             return View(todo); // Return with validation errors
         }
-        todo.Id = _nextId++; // Simple ID generation
-        todo.IsCompleted = false; // Default to not completed
-        _todos.Add(todo);
+
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        string query = "INSERT INTO Todos (Task, IsCompleted) VALUES (@task, @isCompleted)";
+        using var cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@task", todo.Task);
+        cmd.Parameters.AddWithValue("@isCompleted", false);
+        cmd.ExecuteNonQuery();
+
         return RedirectToAction("Index");
     }
 
     // Show edit form
     public IActionResult Edit(int id)
     {
-        var todo = _todos.FirstOrDefault(t => t.Id == id);
-        if (todo == null)
-            return NotFound();
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
 
-        return View(todo);
+        string query = "SELECT * FROM Todos WHERE Id = @id";
+        using var cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        using var reader = cmd.ExecuteReader();
+
+        if (reader.Read())
+        {
+            var todo = new Todo
+            {
+                Id = reader.GetInt32("Id"),
+                Task = reader.GetString("Task"),
+                IsCompleted = reader.GetBoolean("IsCompleted"),
+            };
+            return View(todo);
+        }
+
+        return NotFound();
     }
 
     // Update
@@ -77,31 +90,18 @@ public class TodoController : Controller
     public IActionResult Edit(Todo updatedTodo)
     {
         if (!ModelState.IsValid)
-        {
-            return View(updatedTodo); // Return with validation errors
-        }
+            return View(updatedTodo);
 
-        var todo = _todos.FirstOrDefault(t => t.Id == updatedTodo.Id);
-        if (todo == null)
-            return NotFound();
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
 
-        todo.Task = updatedTodo.Task;
-        todo.IsCompleted = updatedTodo.IsCompleted;
-        return RedirectToAction("Index");
-    }
+        string query = "UPDATE Todos SET Task = @task, IsCompleted = @isCompleted WHERE Id = @id";
+        using var cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@task", updatedTodo.Task);
+        cmd.Parameters.AddWithValue("@isCompleted", updatedTodo.IsCompleted);
+        cmd.Parameters.AddWithValue("@id", updatedTodo.Id);
+        cmd.ExecuteNonQuery();
 
-    // Without model binding
-    // Alternatively we can use FormCollection to handle form data
-    [HttpPost]
-    public IActionResult Edit2(IFormCollection form)
-    {
-        // no validation here, just for demonstration
-        var todo = _todos.FirstOrDefault(t => t.Id == int.Parse(form["Id"]));
-        if (todo == null)
-            return NotFound();
-
-        todo.Task = form["Task"];
-        todo.IsCompleted = bool.Parse(form["IsCompleted"]);
         return RedirectToAction("Index");
     }
 
@@ -109,7 +109,14 @@ public class TodoController : Controller
     [HttpPost]
     public IActionResult Delete(int id)
     {
-        _todos.RemoveAll(t => t.Id == id);
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        string query = "DELETE FROM Todos WHERE Id = @id";
+        using var cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.ExecuteNonQuery();
+
         return RedirectToAction("Index");
     }
 }
