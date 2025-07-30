@@ -8,6 +8,8 @@ Tasks are stored in memory using a static list and reset each time the applicati
 > ⚠️ **Disclaimer**  
 > This project is intended **for teaching purposes only**. It serves as a basic introduction to the **MVC (Model-View-Controller)** pattern using **ASP.NET Core MVC**, aimed at helping students understand the structure and flow of MVC applications.  
 > It does **not use a database** and stores data in memory, which means all data is lost when the application stops.
+>
+> PS: Check branches for code that uses DB (ADO and EF core)
 
 
 ## 🚀 Features
@@ -19,6 +21,7 @@ Tasks are stored in memory using a static list and reset each time the applicati
 - ✅ Client + server-side validation (no empty tasks)
 - ✅ UI using Tailwind CSS CDN
 - ✅ Dynamic views with ViewBag and ViewData examples
+- ✅ MySQL data access (in ADO.NET and EF branch)
 
 ---
 
