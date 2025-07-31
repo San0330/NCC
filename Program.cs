@@ -1,12 +1,18 @@
-using MyTodoApp.Services;
+using Microsoft.EntityFrameworkCore;
+using MyTodoApp.Data; // Add this line if AppDbContext is in the Data namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ILog, MyConsoleLogger>();
-// builder.Services.AddTransient<ILog, MyConsoleLogger>();
-// builder.Services.AddSingleton<ILog, MyConsoleLogger>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(builder.Configuration
+        .GetConnectionString("DefaultConnection"))
+    )
+);
 
 var app = builder.Build();
 
@@ -25,10 +31,7 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

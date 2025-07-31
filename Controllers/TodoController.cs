@@ -1,45 +1,23 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyTodoApp.Data;
 using MyTodoApp.Models;
-using MyTodoApp.Services;
 
 namespace MyTodoApp.Controllers;
 
 public class TodoController : Controller
 {
-    private static List<Todo> _todos = new List<Todo>
+    private readonly AppDbContext _context;
+
+    public TodoController(AppDbContext context)
     {
-        new Todo
-        {
-            Id = 1,
-            Task = "Learn ASP.NET MVC",
-            IsCompleted = false,
-        },
-        new Todo
-        {
-            Id = 2,
-            Task = "Build a Todo App",
-            IsCompleted = true,
-        },
-    };
-
-    private static int _nextId = _todos.Count + 1;
-
-    private readonly ILog _logger;
-
-    public TodoController(ILog logger)
-    {
-        _logger = logger;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        _logger.Info("Accessed Todo Index");
-
-        // Resolve the ILog implementation manually
-        // var logger = HttpContext.RequestServices.GetRequiredService<ILog>();
-        // logger.Info("Visited Index page using HttpContext.RequestServices");
-        return View(_todos);
+        var todos = await _context.Todos.ToListAsync();
+        return View(todos);
     }
 
     // Show create form
@@ -48,24 +26,21 @@ public class TodoController : Controller
         return View();
     }
 
-    // Create
     [HttpPost]
-    public IActionResult Create(Todo todo)
+    public async Task<IActionResult> Create(Todo todo)
     {
         if (!ModelState.IsValid)
-        {
-            return View(todo); // Return with validation errors
-        }
-        todo.Id = _nextId++; // Simple ID generation
-        todo.IsCompleted = false; // Default to not completed
-        _todos.Add(todo);
-        return RedirectToAction("Index");
+            return View(todo);
+
+        _context.Todos.Add(todo);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 
     // Show edit form
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var todo = _todos.FirstOrDefault(t => t.Id == id);
+        var todo = await _context.Todos.FindAsync(id);
         if (todo == null)
             return NotFound();
 
@@ -74,42 +49,27 @@ public class TodoController : Controller
 
     // Update
     [HttpPost]
-    public IActionResult Edit(Todo updatedTodo)
+    public async Task<IActionResult> Edit(Todo todo)
     {
         if (!ModelState.IsValid)
-        {
-            return View(updatedTodo); // Return with validation errors
-        }
+            return View(todo);
 
-        var todo = _todos.FirstOrDefault(t => t.Id == updatedTodo.Id);
-        if (todo == null)
-            return NotFound();
-
-        todo.Task = updatedTodo.Task;
-        todo.IsCompleted = updatedTodo.IsCompleted;
-        return RedirectToAction("Index");
-    }
-
-    // Without model binding
-    // Alternatively we can use FormCollection to handle form data
-    [HttpPost]
-    public IActionResult Edit2(IFormCollection form)
-    {
-        // no validation here, just for demonstration
-        var todo = _todos.FirstOrDefault(t => t.Id == int.Parse(form["Id"]));
-        if (todo == null)
-            return NotFound();
-
-        todo.Task = form["Task"];
-        todo.IsCompleted = bool.Parse(form["IsCompleted"]);
-        return RedirectToAction("Index");
+        _context.Todos.Update(todo);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 
     // Delete
     [HttpPost]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        _todos.RemoveAll(t => t.Id == id);
-        return RedirectToAction("Index");
+        var todo = await _context.Todos.FindAsync(id);
+        if (todo != null)
+        {
+            _context.Todos.Remove(todo);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 }
