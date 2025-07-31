@@ -51,7 +51,10 @@ public class TodoController : Controller
         using var conn = new MySqlConnection(_connectionString);
         conn.Open();
 
-        string query = "INSERT INTO Todos (Task, IsCompleted) VALUES (@task, @isCompleted)";
+        string query =
+            @"INSERT INTO 
+                        Todos (Task, IsCompleted) 
+                        VALUES (@task, @isCompleted)";
         using var cmd = new MySqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@task", todo.Task);
         cmd.Parameters.AddWithValue("@isCompleted", false);
@@ -95,7 +98,11 @@ public class TodoController : Controller
         using var conn = new MySqlConnection(_connectionString);
         conn.Open();
 
-        string query = "UPDATE Todos SET Task = @task, IsCompleted = @isCompleted WHERE Id = @id";
+        string query =
+            @"UPDATE Todos 
+                 SET Task = @task, 
+                     IsCompleted = @isCompleted 
+                 WHERE Id = @id";
         using var cmd = new MySqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@task", updatedTodo.Task);
         cmd.Parameters.AddWithValue("@isCompleted", updatedTodo.IsCompleted);
