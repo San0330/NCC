@@ -1,7 +1,14 @@
 @model List<MyTodoApp.Models.Todo>
 @{
     ViewData["Title"] = "Todo Page";
+    var username = "<script>alert('XSS');</script>";
 }
+
+@* This will render the username as HTML *@
+@Html.Raw($"<h1>Welcome, {username}</h1>") 
+
+@* This will encode the username to prevent XSS *@
+@Html.Encode(username) 
 
 <div class="container mx-auto p-6">
     <h1 class="text-3xl font-bold mb-6">Todo List</h1>
